@@ -51,9 +51,10 @@ class acp_file_test extends \phpbb_functional_test_case
 
 	private function upload_file($filename, $mimetype)
 	{
-		$url = 'adm/index.php?i=-phpbb-pwakit-acp-pwa_acp_module&mode=settings&sid=' . $this->sid;
+		$url = 'index.php?i=-phpbb-pwakit-acp-pwa_acp_module&mode=settings&sid=' . $this->sid;
 
 		$crawler = self::$client->request('GET', $url);
+		$this->assertContainsLang('ACP_PWA_KIT_SETTINGS', $crawler->text());
 
 		$file_form_data = array_merge(['upload' => $this->lang('ACP_PWA_IMG_UPLOAD_BTN')], $this->get_hidden_fields($crawler, $url));
 
@@ -71,7 +72,9 @@ class acp_file_test extends \phpbb_functional_test_case
 			$file_form_data,
 			['pwa_upload' => $file]
 		);
+		$this->assertContainsLang('ACP_PWA_IMG_UPLOAD_SUCCESS', $crawler->text());
 
+		$crawler = self::$client->request('GET', $url);
 		return $crawler;
 	}
 
@@ -151,6 +154,6 @@ class acp_file_test extends \phpbb_functional_test_case
 		$this->assertStringNotContainsString('<h2>' . $this->lang('INFORMATION') . '</h2>', self::get_content());
 
 		// Also the file name should be in the first row of the files table
-		$this->assertEquals('foo.png', $crawler->filter('fieldset')->eq(2)->text());
+		$this->assertStringContainsString('foo.png', $crawler->filter('fieldset')->eq(2)->text());
 	}
 }

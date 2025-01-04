@@ -14,6 +14,7 @@ on:
             - main
             - master
             - develop
+            - '**'
     pull_request:        # Run tests when pull requests are made on these branches in your repo
         branches:
             - main
