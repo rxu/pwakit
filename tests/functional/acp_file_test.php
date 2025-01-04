@@ -10,6 +10,8 @@
 
 namespace phpbb\pwakit\tests\functional;
 
+use Symfony\Component\Mime\Part\Multipart\FormDataPart;
+
 /**
  * @group functional
  */
@@ -66,11 +68,16 @@ class acp_file_test extends \phpbb_functional_test_case
 			'error' => UPLOAD_ERR_OK,
 		];
 
+		$formdata = new FormDataPart($file_form_data);
+
 		$crawler = self::$client->request(
 			'POST',
 			$url,
 			$file_form_data,
-			['pwa_upload' => $file]
+			['pwa_upload' => $file],
+			[
+				'CONTENT_LENGTH' => strlen($formdata->bodyToString()) + $file['size'],
+			]
 		);
 		$this->assertContainsLang('ACP_PWA_IMG_UPLOAD_SUCCESS', $crawler->text());
 
